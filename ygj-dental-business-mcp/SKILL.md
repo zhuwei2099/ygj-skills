@@ -2,7 +2,7 @@
 name: ygj-dental-business-mcp
 description: 通过 ygj-dental-business-mcp 接口查询蓝莓象（HIS 系统）数据，覆盖患者、预约、咨询、影像、病历、收费、收费组合（套餐/组合明细/价目表/技耗分类/组合标价）、卡券、会员与积分、回访、复诊、门店、企业微信客户与群（新增好友/好友标签 `records[].tags`/按标签筛选好友）、小程序 SCRM、业务字典等模块，以及营业额、成交人数等经营指标的取数口径；另含 2 支标签写工具（患者标签增删 / 企微好友标签增删），除打标签外全部只读。当用户提到蓝莓象、HIS、查询患者、预约、咨询、影像、病历、收费、收费组合、套餐、组合明细、价目表、导出组合、卡券、优惠券、核销、会员、积分、回访、复诊、门店、企业微信客户与群、企微新增好友、好友标签、按标签筛选好友、小程序账号、企业微信聊天信息、给患者打标签、给企微好友打标签、新增标签、删除标签、标签维护等操作时使用本技能。
 version: 2026.11.13.3
-skill下载地址: http://git.ygjkq.com:18000/ai/blueberry-dental-skills.git
+skill下载地址: https://github.com/zhuwei2099/ygj-skills.git
 ---
 
 # ygj-dental-business-mcp 接口
