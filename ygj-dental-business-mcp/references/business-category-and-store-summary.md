@@ -36,6 +36,6 @@
 - **汇总维度**：按组织机构 id（`oaOrgId`）分组汇总，作为门店级唯一标识；展示名用 `oaOrgName`（组织机构名称）与 `clinicName`（诊所名称）。
 - **统计指标**：门店营业天数（`medicallyDate` 去重计数）、医生出勤天数（员工 `employeeId+employeeName` 聚合后按日期去重）、门店当天上班医生数据（`workDoctorNum` 求和）等体检登记指标；营业额、成交人数等金额 / 人数指标沿用 [revenue-and-deal-count.md](revenue-and-deal-count.md)。
 - **汇总范围**：以 `employees_list_work_clinic` 返回的白名单为范围；某门店无数据时按 `0` 计入汇总（如无体检登记的门店营业天数 = 0），**不静默跳过、不换店替代**。
-- **`oaOrgId` 与 `clinicId` 的关系**：两者均为门店标识，**汇总用 `oaOrgId`，接口入参用 `clinicId`**；二者是 **1:N**（一个组织可挂多个门店，实测 288 行 = 281 个 `oaOrgId`，7 个各挂 2 个 `clinicId`）⇒ **按 `oaOrgId` 汇总会把同组织多店合并**，属**组织级口径**，不得当单店口径使用。
+- **`oaOrgId` 与 `clinicId` 的关系**：两者均为门店标识，**汇总用 `oaOrgId`，接口入参用 `clinicId`**；二者是 **1:N**（一个组织可挂多个门店，2026-10-15 样本 288 行 = 281 个 `oaOrgId`，7 个各挂 2 个 `clinicId`；白名单行数随授权变化）⇒ **按 `oaOrgId` 汇总会把同组织多店合并**，属**组织级口径**，不得当单店口径使用。
 - **分部 / 大区维度不走 `oaOrgId`**：分部级汇总分组键是 `divisionalId`（`divisionalName` 展示、`divisionalGeneralManager` 负责人），属**独立维度**，见 [clinic-and-staff-lookup.md](clinic-and-staff-lookup.md) §四。
   → 白名单字段、按名称找店、同组织并店规则见 [clinic-and-staff-lookup.md](clinic-and-staff-lookup.md)

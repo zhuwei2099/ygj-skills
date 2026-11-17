@@ -1,8 +1,7 @@
 ---
 name: ygj-dental-business-mcp
-description: 通过 ygj-dental-business-mcp 接口查询蓝莓象（HIS 系统）数据，覆盖患者、预约、咨询、影像、病历、收费、收费组合（套餐/组合明细/价目表/技耗分类/组合标价）、卡券、会员与积分、回访、复诊、门店、企业微信客户与群（新增好友/好友标签 `records[].tags`/按标签筛选好友）、小程序 SCRM、业务字典等模块，以及营业额、成交人数等经营指标的取数口径；另含 2 支标签写工具（患者标签增删 / 企微好友标签增删），除打标签外全部只读。当用户提到蓝莓象、HIS、查询患者、预约、咨询、影像、病历、收费、收费组合、套餐、组合明细、价目表、导出组合、卡券、优惠券、核销、会员、积分、回访、复诊、门店、企业微信客户与群、企微新增好友、好友标签、按标签筛选好友、小程序账号、企业微信聊天信息、给患者打标签、给企微好友打标签、新增标签、删除标签、标签维护等操作时使用本技能。
-version: 2026.11.13.3
-skill下载地址: https://github.com/zhuwei2099/ygj-skills.git
+description: 通过 ygj-dental-business-mcp 接口查询蓝莓象（HIS 系统）数据，覆盖患者、预约、咨询、影像、病历、收费、收费项目、收费组合（套餐/组合明细/价目表/技耗分类/组合标价）、卡券、会员与积分、随访、回访、复诊、体检登记、门店与工作门店、员工与分部/大区、企业微信客户与群（新增好友/好友标签 `records[].tags`/按标签筛选好友）、小程序 SCRM、业务字典、患者标签定义等模块，以及营业额、交易实收、成交人数等经营指标的取数口径；另含 2 支标签写工具（患者标签增删 / 企微好友标签增删），除打标签外全部只读。当用户提到蓝莓象、HIS、查询患者、预约、咨询、影像、病历、收费、收费项目、收费组合、套餐、组合明细、价目表、导出组合、卡券、优惠券、核销、会员、积分、随访、回访、复诊、体检登记、门店、工作门店、员工、分部、大区、企业微信客户与群、企微新增好友、好友标签、按标签筛选好友、小程序账号、企业微信聊天信息、患者标签定义、给患者打标签、给企微好友打标签、新增标签、删除标签、标签维护等操作时使用本技能。
+version: 2026.11.17.1
 ---
 
 # ygj-dental-business-mcp 接口
@@ -50,7 +49,7 @@ skill下载地址: https://github.com/zhuwei2099/ygj-skills.git
 | OpenClaw | `~/.openclaw/skills/ygj-dental-business-mcp` |
 | 共享位（源） | `~/.agents/skills/ygj-dental-business-mcp` |
 
-`$SKILL/scripts/` 目前内置一支可执行脚本：`export_clinic_charge_combs.py`（子能力 `export-clinic-charge-combs`，见 [references/export-clinic-charge-combs.md](references/export-clinic-charge-combs.md)）。它依赖 `ygj_client.py`，按 `YGJ_CLIENT_DIR` → 技能 `scripts/` → 同机工作区 → 工作区默认位 的顺序解析，**不必手工拷客户端**。
+`$SKILL/scripts/` 目前内置一支可执行脚本：`export_clinic_charge_combs.py`（子能力 `export-clinic-charge-combs`，见 [references/export-clinic-charge-combs.md](references/export-clinic-charge-combs.md)）。它依赖 `ygj_client.py`（**未随技能分发**），按 `YGJ_CLIENT_DIR` → 技能 `scripts/` → 同机工作区 → 工作区默认位 → 当前目录 的顺序解析；**找不到时须把 `YGJ_CLIENT_DIR` 指向客户端所在目录**（脚本内的工作区默认位仅适用于作者本机）。
 
 ## 第一步：模式路由
 
@@ -121,7 +120,7 @@ APP_KEY=mcp_ak_********************-8hwO_FFN
 APP_SECRET=mcp_sk_l2Y4PK-********************-********************-w
 ```
 
-本机无凭据文件时索取。落在 `~/.config/ygj-dental-business-mcp-credentials.json`；**不进配置文件、不回显**
+本机无凭据文件时索取。MCP 客户端侧落在 `~/.config/ygj-dental-business-mcp-credentials.json`；**内置脚本 `export_clinic_charge_combs.py` 另读 `~/.workbuddy/ygj-mcp-prod-credentials.json`**。两者都**不进配置文件、不回显**
 
 ### A2 写配置
 
@@ -141,15 +140,15 @@ APP_SECRET=mcp_sk_l2Y4PK-********************-********************-w
 
 ### B1 先判能力边界
 
-**MCP 工具以明细查询为主**（46 只读 + 2 支标签写工具），查询分两条主路径：**患者维度**（`patientId` 入口）与**门店维度**（`clinicId` 入口）；患者检索入口有两条：**`patients_list`**（按时段 / 条件列患者）与 **`patients_quick_search`**（按姓名 / 手机号 / 病历号快速搜）。
+**MCP 工具以明细查询为主**（45 只读 + 2 支标签写工具），查询分两条主路径：**患者维度**（`patientId` 入口）与**门店维度**（`clinicId` 入口）；患者检索入口有两条：**`patients_list`**（按时段 / 条件列患者）与 **`patients_quick_search`**（按姓名 / 手机号 / 病历号快速搜）。
 
 | 用户问的是 | 能否回答 | 怎么做 |
 | --- | --- | --- |
-| 某个患者的预约 / 咨询 / 影像 / 病历 / 收费 / 回访 / 复诊明细 | ✅ | `patients_list_*` 8 个，**必须**先拿到 `patientId` |
+| 某个患者的预约 / 咨询 / 影像 / 病历 / 收费 / 随访 / 回访（复诊）明细 | ✅ | 8 个患者子表明细接口（预约 / 咨询 / 影像 / 病历 / 收费单与交易 / 随访 / 回访（复诊）），**必须**先拿到 `patientId` |
 | 按姓名 / 手机号 / 病历号快速找患者 | ✅ | `patients_quick_search`（必填 `clinicId` + `search`，同词字段并集、多词交集） |
 | 某患者的完整档案 | ✅ | `patients_get_details`（必填 `patientId`） |
 | 当前账号可见哪些门店 / **本次能查哪些门店（授权边界 + 默认范围）** | ✅ | `employees_list_work_clinic`（无参，可直接调）。**后续所有 `clinicId` 入参只能从这里取**；默认只查归属诊所 |
-| 某门店某时段的预约 / 咨询 / 影像 / 病历 / 回访 / 复诊 / 体检登记 | ✅ | `clinics_list_appoints`（预约）+ `clinics_list_*` 8 个，**必填 `clinicId`** |
+| 某门店某时段的预约 / 咨询 / 影像 / 病历 / 随访 / 回访（复诊） / 体检登记 | ✅ | `clinics_list_appoints`（预约）+ `clinics_list_*` 8 个，**必填 `clinicId`** |
 | 患者标签体系（门店可用的标签定义） | ✅ | `basedatas_list_label_definitions`（必填 `clinicId`） |
 | 某患者已打上的标签 | ✅ | `patients_list_labels`（必填 `patientId`）；与标签定义不是一回事 |
 | 给患者 / 企微好友**新增或删除标签** | ⚠️ **可写** | 全库仅 2 支写工具：`patients_incremental_submit_labels`（`patientId`）、`wecom_externalcontact_mark_tag`（`wecomExternalUserId`）。**须用户显式要求**，走铁律 14 与 §B2 七 |
@@ -158,7 +157,7 @@ APP_SECRET=mcp_sk_l2Y4PK-********************-********************-w
 | 某门店的**会员开卡 / 续费 / 到期**清单 | ✅ | `clinics_list_members`（必填 `clinicId` + `dateType` + 日期区间） |
 | 某患者的**会员卡、持券、积分余额与流水** | ✅ | `patients_list_memberships` / `patients_list_coupons` / `patients_point_account` + `patients_list_point_logs`，均必填 `patientId` |
 | 某患者的**小程序（SCRM）账号** | ✅ | `scrm_get_user`（必填 `scrmUserId`，取自患者档案；空串表示未注册） |
-| 某门店某日 / 某时段的营业额（实收） | ✅ | **收入相关场景一律用交易接口**：门店维度 `clinics_list_bill_docs`（按**交易时间** `optDateTime`）→ `sum(payAmount)` 即**净实收**（退费已以**负数行**计入，不必再扣）；患者维度 `patients_list_bill_docs` 同理 |
+| 某门店某日 / 某时段的**营业额 / 交易实收 / 净实收** | ✅ | **收入相关场景一律用交易接口**：门店维度 `clinics_list_bill_docs`（按**交易时间** `optDateTime`），患者维度 `patients_list_bill_docs`。**净实收** = `sum(payAmount)`（退费已以**负数行**计入，不必再扣）；**营业额** = `sum(payments[].payAmount, payType ∈ {0,3})`；**交易实收** = `payType ∈ {0,1,3}`。三口径不得混用，见 [revenue-and-deal-count.md](references/revenue-and-deal-count.md) §一 |
 | 直接给出「上月营业额 / 新患者数 / 复诊率」等聚合报表 | ❌ | **没有聚合、报表工具**；只能在明细上自行求和。写能力**仅限打标签**。口径见 §B3 与 references |
 
 ### B2 工具速查（按模块 · 47 个）
@@ -187,7 +186,7 @@ APP_SECRET=mcp_sk_l2Y4PK-********************-********************-w
 | `patients_list_emrs` | 患者 id（`patientId`） | 电子病历；牙位按 `tooth_scope` 拆成 5 个数组返回；不传 `clinicId` 跨门店 |
 | `patients_list_images` | 患者 id（`patientId`） | 影像资料（全景片 / 小牙片 / CBCT / STL / 各类知情同意书 / 检查报告文档）。⚠️ `imageUrl` 是隐私裸链，见铁律 3 |
 | `patients_list_bills` | 患者 id（`patientId`） | **⚠️ 已弃用（收入相关场景一律禁用，2026-10-13）**；收费单；收入取数一律走 `patients_list_bill_docs` |
-| `patients_list_bill_docs` | 患者 id（`patientId`） | **营业额 / 交易实收唯一取数接口（患者维度，2026-10-13 起）**；收费单据明细粒度；不传 `status` 默认查正常交易。可选：`startDate`/`endDate`（**须成对**）、`billType`、`feeType`（1 收费 / 2 退费 / 3 减免 …）、`clinicId`（不传则跨门店） |
+| `patients_list_bill_docs` | 患者 id（`patientId`） | **营业额 / 交易实收唯一取数接口（患者维度，2026-10-13 起）**；收费单据明细粒度；不传 `status` 默认查正常交易。可选：`startDate`/`endDate`（**须成对**）、`billType`、`feeType`（1 收费 / 2 退费 / 3 减免 …）、`clinicId`（不传则跨门店）。⚠️ **无 `current`/`size` 分页参数**，一次返回全部明细；大患者须用日期区间收窄 |
 | `patients_list_followups` | 患者 id（`patientId`） | 随访；不传 `clinicId` 时跨门店 |
 | `patients_list_returnvisits` | 患者 id（`patientId`） | 回访 / 复诊；不传 `clinicId` 时跨门店 |
 | `patients_list_coupons` 🆕 | 患者 id（`patientId`） | 患者持券：主券 + 子券（`childCoupons[]`）；可选 `clinicId` 收窄。**`data` 直挂数组**，无分页。⚠️ `allowedClinicNames` 是长列表，按需摘取 |
@@ -226,7 +225,7 @@ APP_SECRET=mcp_sk_l2Y4PK-********************-********************-w
 
 | 工具 | 必要参数 | 说明 |
 | --- | --- | --- |
-| `employees_list_work_clinic` | 无 | 当前账号的**工作门店授权清单**（实测 288 行）。**所有 `clinicId` 入参的唯一白名单来源**；`isDefault="1"` 仅 1 行 = 归属诊所；返回形态：数组直接挂在 `data`（**不是分页对象**，无 `records`/`total`）。字段用法见 [references/clinic-and-staff-lookup.md](references/clinic-and-staff-lookup.md)（2026-10-15 schema 扩展后实测 24 字段） |
+| `employees_list_work_clinic` | 无 | 当前账号的**工作门店授权清单**（行数随账号门店授权变化，以当次调用为准；历史实测 288 行 → 308 / 311 行）。**所有 `clinicId` 入参的唯一白名单来源**；`isDefault="1"` 仅 1 行 = 归属诊所；返回形态：数组直接挂在 `data`（**不是分页对象**，无 `records`/`total`）。字段用法见 [references/clinic-and-staff-lookup.md](references/clinic-and-staff-lookup.md)（2026-10-15 schema 扩展后实测 24 字段） |
 | `employees_get_details` | 无 | **当前调用者本人**的员工档案（28 字段，全字符串）。不能查别人、**不含手机号**；`postNames` 是**连锁级**岗位（与 `employees_list_work_clinic` 的门店级岗位语义不同） |
 | `employees_list` | 门店 id（`clinicId`）、当前页（`current`）、每页条数（`size`） | 按门店查员工列表（12 参数），支持 `search`（姓名 / 工号 / 手机 搜索）。⚠️ `size`/`current` 传**数字**，筛选参数（`postId`/`isLeave`/`isPartJob`/`isTrainee`/`isAssistant`/`oaJobStatus`/`wecomStatus`/`professionalTitle`/`search`）传**字符串** |
 
@@ -286,7 +285,8 @@ APP_SECRET=mcp_sk_l2Y4PK-********************-********************-w
 - **两层校验，缺一不可（defense-in-depth）**：
   - **客户端闸门（必需）**：任何 `clinicId` 入参**先过工作诊所白名单**，不在名单内一律拒绝并报告 —— **不得因为「服务端也会拦」而省略这一步**。
   - **服务端校验（兜底）**：编造 / 非授权 `clinicId` 返回 **`[UPSTREAM_BUSINESS_REJECTED]`**（`isError:true`）；白名单内真实门店正常返回（`code:200`）。
-  - **不得仅凭返回体判越权**：`UPSTREAM_BUSINESS_REJECTED` 是**多因笼统码**（缺必填参数 / 门店不存在或无权 / 日期跨度超限 **同码**），见到它**不能直接判越权**，须结合参数自查后再定性。
+  - **不得仅凭返回体判越权**：`UPSTREAM_BUSINESS_REJECTED` 是**多因笼统码**（缺必填参数 / 门店不存在或无权 **同码**），见到它**不能直接判越权**，须结合参数自查后再定性。
+  - **日期跨度超限另有一种返回**：卡券 / 会员类工具实测返回 `{"code":400,"success":false,"msg":"查询日期跨度不能超过3个月"}`（2026-10-31，`clinics_list_members`），**不是** `UPSTREAM_BUSINESS_REJECTED`；其余工具未逐个复测。见 [coupon-member-point.md](references/coupon-member-point.md) §〇。
 - **默认只查归属诊所**（`isDefault="1"`）；多条且无默认标记 → **不许替用户选**，让其指定。
 - **跨店需用户显式要求**，且目标 `clinicId` 逐个过白名单；越权即停止并报告，**不得静默跳过或换店替代**。
 - **fail-closed**：白名单取不到（网络 / 超时 / 授权失败 / 结构异常）→ **拒绝一切取数**，绝不退回「不校验」。
@@ -329,7 +329,8 @@ APP_SECRET=mcp_sk_l2Y4PK-********************-********************-w
 | `clinics_list_coupon_consume_records` | —（必填） | **100** |
 | `clinics_list_members` | —（必填） | **100** |
 | `patients_list_point_logs` | 100 | **100** |
-| `wecom_list_group_friends` | 100 | **100** |
+| `wecom_list_group_friends` | —（schema 未声明，按 100 使用） | **100** |
+| `employees_list` | —（必填） | **100** |
 | `employees_list_work_clinic` | —（不分页，数组直挂 `data`） | — |
 
 #### 4. 限流与重试

@@ -37,7 +37,7 @@
 | --- | --- |
 | 工具 | `basedatas_list_charge_combs` |
 | 必填入参 | `clinicId` |
-| 可选入参 | `search`（名称/编码模糊）· `status`（`0`=启用 **默认** / `1`=禁用）· `current` · `size` |
+| 可选入参 | `keyword`（名称/编码模糊）· `status`（`0`=启用 **默认** / `1`=禁用）· `current` · `size` |
 | 分页 | 默认 10，**上限 100**；终止条件 = 本页为空 或 `current >= pages` |
 | 返回形态 | `data.records[]` = 组合，**每个组合自带 `items[]` 明细** |
 
@@ -111,7 +111,7 @@ python export_clinic_charge_combs.py --store 宣武门店 --include-disabled --o
 | `--out-dir` | 输出目录，默认客户端所在工作区的 `outputs/` |
 | `--tag` | 文件名日期标记，默认今天 `YYYYMMDD` |
 
-**依赖解析**：脚本按 `YGJ_CLIENT_DIR` 环境变量 → 技能 `scripts/` → 同机工作区 → 工作区默认位 的顺序查找 `ygj_client.py`（凭证 `~/.workbuddy/ygj-mcp-prod-credentials.json` 需同时就位）。找不到会明确报错并提示设 `YGJ_CLIENT_DIR`。
+**依赖解析**：脚本按 `YGJ_CLIENT_DIR` 环境变量 → 技能 `scripts/` → 同机工作区 → 工作区默认位 → 当前目录 的顺序查找 `ygj_client.py`（凭证 `~/.workbuddy/ygj-mcp-prod-credentials.json` 需同时就位）。`ygj_client.py` **未随技能分发**，脚本内的工作区默认位仅适用于作者本机；其他机器必须设 `YGJ_CLIENT_DIR`，否则会明确报错。
 
 **产物命名**：`<门店>_已启用收费组合及明细_<tag>.xlsx / .csv / _raw.json`（并入禁用时前缀变「全部收费组合」）。
 

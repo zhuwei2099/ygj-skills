@@ -8,8 +8,8 @@
 
 | 工具 | 必填 | 可选 | 分页 |
 | --- | --- | --- | --- |
-| `basedatas_list_charge_combs` | `clinicId` | `search`（名称 / 编码模糊）、`status`（`0`=启用**默认** / `1`=禁用）、`current`、`size` | 默认 **10**，上限 **100** |
-| `basedatas_list_charge_items` | `clinicId` | `search`（编码 / 名称 / 拼音）、`status`（不传=全部）、`current`、`size` | 默认 **10**，上限 **100** |
+| `basedatas_list_charge_combs` | `clinicId` | `keyword`（名称 / 编码模糊）、`status`（`0`=启用**默认** / `1`=禁用）、`current`、`size` | 默认 **10**，上限 **100** |
+| `basedatas_list_charge_items` | `clinicId` | `keyword`（编码 / 名称 / 拼音）、`status`（不传=全部）、`current`、`size` | 默认 **10**，上限 **100** |
 
 - 只查「已启用」时**显式传 `status=0`**；不传即默认启用，但显式更稳。
 - 禁用组合可另跑一次 `status=1` 作对照（宣武门店实测：启用 **301** / 禁用 **25**）。

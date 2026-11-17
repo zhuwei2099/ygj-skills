@@ -104,13 +104,15 @@
 
 技能本体同时存在于两个位置，**以本仓库为唯一事实来源**：
 
-- 本仓库（源）：`blueberry-dental-skills/skills/ygj-dental-business-mcp/`
+- 本仓库（源）：`ygjhis-ai/ygj-skills/ygj-dental-business-mcp/`（历史文档中曾写作 `blueberry-dental-skills/skills/...`，指同一技能）
 - 跨 Agent 共享位（派生）：`~/.agents/skills/ygj-dental-business-mcp/` —— WorkBuddy / Hermes / OpenClaw 均指向此目录
 
 **2026-10-15 已用本仓库版整体覆盖共享位**，两份现逐文件字节一致（`diff -r` 无差异）。覆盖前整体备份在 `~/.agents/backups/ygj-dental-business-mcp-20261015/`。
 
 > ✅ **2026-10-31 已完成双向回灌**：此前落在共享位的 2026.10.15.11 ~ 2026.10.16.17 增量（`revenue-and-deal-count.md` §五、`combo-transaction-by-patient.md` 互补副本适用范围限定、`clinic-and-staff-lookup.md` 分部实测、`export-clinic-charge-combs.md` / `price-list-and-combos.md` / `wecom-friends-and-labels.md` 三份新 reference、`scripts/export_clinic_charge_combs.py`、`SKILL.md` 索引与限流口径、本 changelog）已按「共享位增量 → 仓库」回灌；随后按「仓库 → 共享位」整体覆盖并 `diff -r` 校验一致。备份在 `~/.agents/backups/ygj-dental-business-mcp-20261031/`。
 
+> ⚠️ **2026-11-17 复核订正**：上述「逐文件字节一致」的措辞不再准确 —— 共享位 `SKILL.md` 的 frontmatter 额外保留一行 `skill下载地址: http://git.ygjkq.com:18000/ai/blueberry-dental-skills.git`，仓库版没有；除该行外两份内容一致。后续同步以「内容一致 + 该下载地址行仅保留在共享位」为准。
+>
 > ✅ **2026-11-13 再次双向合并**（本次**不是**单向覆盖）：比对发现共享位在 `coupon-member-point.md`（§2.3 480 会员卡识别，2026-11-07 实测，+12 行）与 `revenue-and-deal-count.md`（§六 全门店营业额排名 + R6 订正，2026-11-01 定，+20 行 / 改 1 行）**比仓库新**，仓库无独有内容 ⇒ ① 先把上述两份增量**回灌到仓库**；② 再把本次 2026.11.13.1–.3 的改动（`SKILL.md`、`references/wecom-friends-and-labels.md`、`references/verification-discipline.md`、新增 `references/label-write.md`、本 changelog）同步到共享位；③ `diff -r` 校验两份**逐文件一致**。覆盖前备份在 `~/.agents/backups/ygj-dental-business-mcp-20261113/`（13 个文件）。⚠️ 教训沿用：**同步前必须先 `diff -r`**，单向覆盖会在共享位存在未回灌增量时静默丢数据。
 
 ### 本次覆盖被移除的内容（仅存于备份）
@@ -157,6 +159,7 @@
 
 | 版本 | 变更 |
 | --- | --- |
+| 2026.11.17.1 | **一致性审计修正（静态核对，未调用任何写工具）**：① §B1「46 只读」笔误改为 **45**（47 = 45 + 2）；② 价目表 / 导出两处关键词参数名 `search` → **`keyword`**（实际 schema；`search` 仅属 `patients_quick_search`）；③ §B3.1 拆分「日期跨度超限」返回 —— 卡券 / 会员实测为 `code:400`，**不是** `UPSTREAM_BUSINESS_REJECTED`；④ 拆分**营业额 / 交易实收 / 净实收**三口径，与 revenue 文档对齐；⑤ 白名单行数改为「随授权变化（288 → 308 / 311）」；⑥ 补凭据路径（MCP 侧 `~/.config/...`，内置脚本 `~/.workbuddy/...`）、`ygj_client.py` 未随技能分发与解析顺序、`employees_list` / `wecom_list_group_friends` 的 size 上限、`patients_list_bill_docs` 无分页参数；⑦ `description` 触发词补随访 / 体检登记 / 员工 / 分部 / 收费项目 / 标签定义；⑧ 修正仓库路径与共享位「字节一致」表述。 |
 | 2026.11.13.3 | **企微好友 ID 映射由「未实测」改为「已实测」**（只读核对，未写任何数据）：① 取 `employees_list_work_clinic` 的 `isDefault="1"` 门店（牙管家集团 `1476530438895636482`，实测 **311** 行白名单）→ `wecom_list_friends`（`current=1`/`size=5`/`2026-01-01~2026-11-13`）→ **`total=241`、`tags` 键逐行存在（无标签为 `[]`）**；② 以 `records[0].externalUserId`（`wma0G5KQ…`）连同同行 `corpId`（`ww4a9cecd…`）调 `wecom_get_friends_details`，**返回同一位好友、`externalUserId` 原样回显** ⇒ 出参 `externalUserId` 与入参 `wecomExternalUserId` **同值、仅字段名不同**，`corpId` 也可从同一行直接取；③ 同步更新 SKILL.md §B2 四 与 [label-write.md](label-write.md) §三、[wecom-friends-and-labels.md](wecom-friends-and-labels.md) §一，删掉「首次使用先核对映射」的待验证措辞；④ **仍未实测**：两支写工具的实际调用（返回结构 / 错误文案 / 幂等性）、写侧跨店归属校验 —— 首次写仍须做最小样本 |
 | 2026.11.13.2 | **从技能中移除旧名 `appoints_list`**：① SKILL.md 全量清理（页首计数、§B2 模块表、§B2 二 段首与脚注、`clinics_list_appoints` 行内提示），门店预约**只保留** `clinics_list_appoints` 一个入口；② 计数由 48 调整为 **47（45 只读 + 2 写）**，门店维度 14 → **13**；③ 页首补一条明确说明 —— 服务端 `tools/list` **仍返回**该旧名（schema 与新名逐字一致），属**服务端残留**，**不得使用、不得据此认为有两个预约接口**，避免后续重新收录；④ §一 作废口径表同步改为「已移除」；⑤ [verification-discipline.md](verification-discipline.md) 的历史案例**保留原始记录不改写**，仅更新顶部提示 |
 | 2026.11.13.1 | **新增 2 个写工具（46 → 48），「全部只读」作废**：① 🚨 `patients_incremental_submit_labels`（患者标签增删）与 `wecom_externalcontact_mark_tag`（企微好友标签增删）为全库**仅有的写操作**；二者的 `addLabelIds` / `deleteLabelIds` 为**数组**、**至少一侧非空**、空数组 = 该侧不操作（≠ 清空全部标签）；② 🚨 `wecom_externalcontact_mark_tag` 在好友**已关联患者**时会**同步更新该患者标签**（跨对象副作用）；③ SKILL.md 新增**铁律 14**（写工具默认不执行：须用户明确要求 → 列对象/标签名/增删方向确认 → 禁批量 → 写后回读，不得只凭返回码宣称成功），§B1 补「可写」行，§B2 补**七、标签写入**，§B3 新增「6. 写操作范围」（两支写工具**都不收 `clinicId`**，白名单闸门无法直接套用，代偿做法 + fail-closed）；④ 新增 [label-write.md](label-write.md)（标签 ID 来源、六步流程、禁止清单、最小样本验证）；⑤ [wecom-friends-and-labels.md](wecom-friends-and-labels.md) 补工具边界行，并把「禁用 labelId」**限定为读侧**（读用名、写用 id）；⑥ 工具总数 46 → **48**（患者维度 16→17、企业微信 6→7，门店维度仍 14，含旧名 `appoints_list`）；⑦ 顺手按 2026-11-13 `tools/list` 校准若干参数：`clinics_list_appoints` 来源三级为 `firstSource`/`secondSource`/`threeSource`（传 id）、`clinics_list_consults` 的 `status` 与 `filterDateType` 1–4、`clinics_list_coupon_records` 补 `couponType`/`allowedItemName`/`distributeEmployeeId`/`sharable`、`clinics_list_coupon_consume_records` 补 `couponType`/`distributeEmployeeId`/`fromType`、`clinics_list_members` 补 `memberCardId`、`patients_list_bill_docs` 补可选 `startDate`/`endDate`（须成对）/`billType`/`feeType`、`wecom_list_friends` 的 `tags` 上限 10 个；⑧ ⚠️ **写路径未实测**：只核对 `tools/list` schema，**未实际调用**（避免污染生产数据），返回结构 / 错误文案 / 幂等性均未验证，首次使用须先做最小样本验证 |

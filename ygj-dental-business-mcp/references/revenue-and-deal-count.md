@@ -80,7 +80,7 @@
 
 **六步，顺序不可换：**
 
-1. **取分部所有门店** —— `employees_list_work_clinic` **一次调用**（288 行），按 `divisionalGeneralManager == 负责人` 筛出 `clinicId` 集合；同名负责人可能挂多个 `divisionalId`，需先判元素个数（见 [clinic-and-staff-lookup.md](clinic-and-staff-lookup.md) §四）。**不需要、也不得调用员工表 `employees_list`**。
+1. **取分部所有门店** —— `employees_list_work_clinic` **一次调用**（行数以当次返回为准；2026-10 样本 288 行），按 `divisionalGeneralManager == 负责人` 筛出 `clinicId` 集合；同名负责人可能挂多个 `divisionalId`，需先判元素个数（见 [clinic-and-staff-lookup.md](clinic-and-staff-lookup.md) §四）。**不需要、也不得调用员工表 `employees_list`**。
 2. **取交易记录** —— 对名册内每个 `clinicId` 调 `clinics_list_bill_docs`（`startDate`/`endDate` + `current`/`size` 翻页；单店单次，**无多店批量入参**）。
 3. **按交易门店归店** —— 🚨 返回体里门店字段是 **`optClinicId`**（交易门店），**不是**请求入参的 `clinicId`。归店必须用 `optClinicId`；`optClinicId` 不属于本分部门店集合的行**剔除**，并在报告里透明列示剔除行数与金额。时间轴为返回体 **`optDateTime`**（交易时间，非入参）。
 4. **按组织机构聚合** —— 门店(`optClinicId`) → **`oaOrgId`**（同组织多门店合并）→ 分部合计 = Σ 各组织机构。
