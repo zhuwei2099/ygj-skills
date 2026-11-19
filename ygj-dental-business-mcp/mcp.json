@@ -1,0 +1,23 @@
+{
+  "name": "ygj-dental-business-mcp",
+  "transport": {
+    "type": "streamable-http",
+    "url": "https://api-chishu.lifesega.com/v1/mcp",
+    "protocolVersion": "2024-11-05"
+  },
+  "authentication": {
+    "type": "oauth2",
+    "extension": "io.modelcontextprotocol/oauth-client-credentials",
+    "grantType": "client_credentials",
+    "tokenEndpoint": "https://api-chishu.lifesega.com/oauth2/token",
+    "tokenEndpointAuthMethod": "client_secret_basic",
+    "clientId": "<填写 MCP 账号的 appKey>",
+    "clientSecret": "<填写创建或轮换时领取的 appSecret>",
+    "scope": "mcp.invoke",
+    "resource": "https://api-chishu.lifesega.com/v1/mcp"
+  },
+  "tokenUsage": {
+    "type": "Bearer",
+    "refresh": "在过期前或收到 HTTP 401 后重新获取一次"
+  }
+}
